@@ -1,0 +1,81 @@
+/*
+ * @NOTE: Prepend a `~` to css file paths that are in your node_modules
+ *        See https://github.com/webpack-contrib/sass-loader#imports
+ */
+
+@import '~typeface-open-sans/index.css';
+@import '~typeface-roboto-mono/index.css';
+
+@font-face {
+  font-family: 'Minercraftory';
+  src: url('./Minercraftory.ttf');
+}
+
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+.drag {
+  -webkit-app-region: drag;
+}
+
+#root {
+  background-color: white;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  background-color: rgba(0, 0, 0, 0);
+}
+::-webkit-scrollbar:hover {
+  /* background-color: rgba(0, 0, 0, 0.09); */
+  background-color: #f5f5f5;
+}
+::-webkit-scrollbar-thumb {
+  /* background: rgba(0, 0, 0, 0.2); */
+  background: #e0e0e0;
+  /* border-radius: 16px; */
+}
+::-webkit-scrollbar-thumb:active {
+  /* background: rgba(0, 0, 0, 0.61); */
+  background: #bdbdbd;
+}
+::-webkit-scrollbar-thumb:vertical {
+  min-height: 10px;
+}
+::-webkit-scrollbar-thumb:horizontal {
+  min-width: 10px;
+}
+
+.message-owner,
+.message-other {
+  border-radius: 10px;
+}
+
+.message-other + .message-owner {
+  border-bottom-right-radius: 5px;
+}
+
+.message-me + .message-owner {
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+
+.message-owner:last-of-type {
+  border-bottom-right-radius: 10px;
+}
+
+.message-status {
+  opacity: 0.5;
+}
+
+.message-status:last-of-type {
+  opacity: 1;
+}
