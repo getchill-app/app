@@ -36,7 +36,6 @@ import InfoView from './info'
 type Props = {
   channel: Channel
   index: number
-  user: User
 }
 
 type ScrollPosition = {
@@ -189,12 +188,7 @@ export default (props: Props) => {
           zIndex: 10,
         }}
       >
-        <MessageInputView
-          channel={props.channel}
-          user={props.user}
-          addMessage={addMessage}
-          removeMessage={removeMessage}
-        />
+        <MessageInputView channel={props.channel} addMessage={addMessage} removeMessage={removeMessage} />
       </Box>
       <InfoView channel={props.channel} open={infoOpen} onClose={() => setInfoOpen(false)} />
     </Box>

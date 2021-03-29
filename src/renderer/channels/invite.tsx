@@ -28,7 +28,6 @@ import {openSnack, openSnackError} from '../snack'
 
 type Props = {
   channel: string
-  inbox: string
   open: boolean
   close: () => void
 }
@@ -49,7 +48,6 @@ export default (props: Props) => {
       const rids = recipients.map((k: Key) => k.id!)
       const resp = await rpc.channelInvite({
         channel: props.channel,
-        sender: props.inbox,
         recipients: rids,
       })
     } catch (err) {

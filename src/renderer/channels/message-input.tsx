@@ -9,7 +9,6 @@ import {openSnack, openSnackError} from '../snack'
 
 type Props = {
   channel: Channel
-  user: User
   addMessage: (message: Message) => void
   removeMessage: (message: Message) => void
 }
@@ -21,7 +20,6 @@ export default (props: Props) => {
     try {
       const prepare = await rpc.messagePrepare({
         channel: props.channel.id,
-        sender: props.user.kid,
         text: text,
       })
       props.addMessage(prepare.message!)
@@ -29,7 +27,6 @@ export default (props: Props) => {
       try {
         const create = await rpc.messageCreate({
           channel: props.channel.id,
-          sender: props.user.kid,
           text: text,
         })
       } catch (err) {

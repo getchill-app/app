@@ -30,7 +30,6 @@ import {Store} from 'pullstate'
 import {openSnack, openSnackError} from '../snack'
 
 type Props = {
-  user: User
   open: boolean
   close: (channel?: Channel) => void
 }
@@ -55,7 +54,6 @@ export default (props: Props) => {
       setLoading(true)
       const resp = await rpc.channelCreate({
         name: name,
-        user: props.user.kid,
       })
       setLoading(false)
       props.close(resp.channel)

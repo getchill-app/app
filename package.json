@@ -32,11 +32,9 @@
     ],
     "extraResources": [
       "bin/chills",
-      "bin/chill",
       "bin/fido2.so",
       "bin/updater",
       "bin/chills.exe",
-      "bin/chill.exe",
       "bin/updater.exe"
     ],
     "dmg": {

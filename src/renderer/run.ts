@@ -24,11 +24,9 @@ export const serviceStart = () => {
     }
 
     const online = () => {
-      console.log('Online')
       ping()
     }
     window.addEventListener('online', online)
-    // window.addEventListener('offline', offlineFn)
 
     ipcRenderer.removeAllListeners('focus')
     ipcRenderer.on('focus', (event, message) => {

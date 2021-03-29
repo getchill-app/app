@@ -30,11 +30,9 @@ export enum ConnectStatus {
 }
 
 type Props = {
-  user?: User
   connectStatus: ConnectStatus
   connect: () => void
   disconnect: () => void
-  selectUser: (user: User) => void
 }
 
 const connectStatus = (status: ConnectStatus): string => {
@@ -62,18 +60,6 @@ export default (props: Props) => {
     setAnchorEl(null)
   }
 
-  React.useEffect(() => {
-    const fn = async () => {
-      const resp = await rpc.keys({})
-      const users = resp.keys?.filter((k: Key) => k.isPrivate && !!k.user).map((k: Key) => k.user!) || []
-      setUsers(users as User[])
-      if (!props.user && users.length > 0) {
-        props.selectUser(users[0])
-      }
-    }
-    fn()
-  }, [])
-
   return (
     <Box
       display="flex"
@@ -85,7 +71,6 @@ export default (props: Props) => {
       <ButtonBase focusRipple aria-haspopup="true" onClick={setOpen}>
         <Box display="flex" flexDirection="column" paddingTop={1} paddingBottom={1}>
           <Box display="flex" flexDirection="row">
-            {props.user && <UserLabel user={props.user} />}
             {/* <Typography>{connectStatus(props.connectStatus)}</Typography> */}
             {props.connectStatus == ConnectStatus.Disconnected && (
               <Box paddingLeft={2}>
@@ -110,21 +95,6 @@ export default (props: Props) => {
         onClose={close}
       >
         <Box display="flex" flexDirection="column" flex={1} style={{width: 270}}>
-          {users.map((user: User) => (
-            <ButtonBase
-              key={user.id}
-              focusRipple
-              aria-haspopup="true"
-              onClick={() => {
-                props.selectUser(user)
-                close()
-              }}
-              style={{padding: 10}}
-            >
-              <UserLabel user={user} />
-            </ButtonBase>
-          ))}
-
           {props.connectStatus == ConnectStatus.Connected && (
             <Button
               color="secondary"
@@ -137,7 +107,7 @@ export default (props: Props) => {
               Disconnect
             </Button>
           )}
-          {props.user && props.connectStatus == ConnectStatus.Disconnected && (
+          {props.connectStatus == ConnectStatus.Disconnected && (
             <Button
               color="primary"
               fullWidth

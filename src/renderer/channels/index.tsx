@@ -42,7 +42,6 @@ type State = {
   channels: Channel[]
   input: string
   selected?: Channel
-  user?: User
 }
 
 const initialState: State = {
@@ -52,17 +51,9 @@ const initialState: State = {
 
 const store = new Store(initialState)
 
-const refresh = async (user?: User) => {
-  if (!user) {
-    store.update((s) => {
-      s.channels = []
-    })
-    return
-  }
+const refresh = async () => {
   try {
-    const resp = await rpc.channels({
-      user: user.kid!,
-    })
+    const resp = await rpc.channels({})
     const channels = resp.channels || []
     store.update((s) => {
       s.channels = channels
@@ -77,7 +68,7 @@ const refresh = async (user?: User) => {
 }
 
 export default (props: Props) => {
-  const {channels, selected, user} = store.useState()
+  const {channels, selected} = store.useState()
 
   const [connectStatus, setConnectStatus] = React.useState(ConnectStatus.Disconnected)
 
@@ -85,16 +76,33 @@ export default (props: Props) => {
 
   const stream = React.useRef<ClientReadableStream<RelayOutput> | null>(null)
 
-  const selectUser = (user: User) => {
-    console.log('Select user', user)
-    store.update((s) => {
-      s.user = user
-    })
+  React.useEffect(() => {
+    refresh()
+  }, [])
+
+  const setOnline = () => {
+    console.log('Online')
+    connect()
+  }
+
+  const setOffline = () => {
+    console.log('Offline')
+    setConnectStatus(ConnectStatus.Disconnected)
   }
 
   React.useEffect(() => {
-    refresh(user)
-  }, [user])
+    window.addEventListener('offline', setOffline)
+    return () => {
+      window.removeEventListener('offline', setOffline)
+    }
+  }, [])
+
+  React.useEffect(() => {
+    window.addEventListener('online', setOnline)
+    return () => {
+      window.removeEventListener('offline', setOnline)
+    }
+  }, [])
 
   const select = (channel: Channel) => {
     console.log('Select channel', channel)
@@ -103,17 +111,15 @@ export default (props: Props) => {
     })
   }
 
+  let cancelling = false
   const connect = () => {
-    if (!user) {
-      return
-    }
     console.log('Relay connect...')
     setConnectStatus(ConnectStatus.Connecting)
-    const relay = rpc.relay({keys: [user.kid!]})
+    const relay = rpc.relay({})
     stream.current = relay
     relay.on('data', (relay: RelayOutput) => {
       console.log('Relay output', relay)
-      refresh(user)
+      refresh()
       setConnectStatus(ConnectStatus.Connected)
     })
     relay.on('error', (err: RPCError) => {
@@ -125,7 +131,7 @@ export default (props: Props) => {
     })
     relay.on('end', () => {
       console.log('Relay end')
-      setConnectStatus(ConnectStatus.Disconnected)
+      if (!cancelling) setConnectStatus(ConnectStatus.Disconnected)
     })
   }
 
@@ -138,9 +144,10 @@ export default (props: Props) => {
     connect()
     return () => {
       console.log('Relay cancel')
+      cancelling = true
       disconnect()
     }
-  }, [user])
+  }, [])
 
   const closeCreate = (channel?: Channel) => {
     setCreateOpen(false)
@@ -226,21 +233,15 @@ export default (props: Props) => {
                 overflow: 'hidden',
               }}
             >
-              <StatusView
-                user={user}
-                connectStatus={connectStatus}
-                connect={connect}
-                disconnect={disconnect}
-                selectUser={selectUser}
-              />
+              <StatusView connectStatus={connectStatus} connect={connect} disconnect={disconnect} />
             </Box>
           </Box>
         </Box>
         <Box display="flex" flex={1}>
-          {selected && user && <ChannelView user={user} channel={selected} index={selected!.index!} />}
+          {selected && <ChannelView channel={selected} index={selected!.index!} />}
         </Box>
       </Box>
-      {user && <ChannelCreateView user={user} open={createOpen} close={closeCreate} />}
+      {<ChannelCreateView open={createOpen} close={closeCreate} />}
     </Box>
   )
 }
