@@ -3,11 +3,14 @@ import * as React from 'react'
 import {Box} from '@material-ui/core'
 
 import ChannelsView from './channels'
+import DBDialog from './db/dialog'
 
 export default (_: {}) => {
   return (
     <Box display="flex" flex={1} flexDirection="row" style={{height: '100%'}}>
       <ChannelsView />
+
+      <DBDialog open={false} close={() => {}} />
     </Box>
   )
 }

@@ -74,7 +74,7 @@ export default (props: Props) => {
           borderRadius: 10,
           paddingLeft: 8,
           paddingTop: 4,
-          paddingBottom: 4,
+          paddingBottom: 1,
           paddingRight: 5,
         }}
       >

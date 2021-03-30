@@ -18,7 +18,10 @@ import {
 import {CloseIcon, InfoIcon} from '../icons'
 import {breakWords} from '../theme'
 
+import {rpc} from '../rpc/client'
 import {Channel} from '@getchill.app/tsclient/lib/rpc'
+
+import {openSnack, openSnackError} from '../snack'
 
 type Props = {
   open: boolean
@@ -27,6 +30,17 @@ type Props = {
 }
 
 export default (props: Props) => {
+  const channelLeave = async () => {
+    try {
+      const resp = await rpc.channelLeave({
+        channel: props.channel.id,
+      })
+      props.onClose()
+    } catch (err) {
+      openSnackError(err)
+    }
+  }
+
   return (
     <Drawer anchor="right" open={props.open} onClose={props.onClose}>
       <Box paddingLeft={2} position="relative" style={{width: 400}}>
@@ -36,7 +50,7 @@ export default (props: Props) => {
           </IconButton>
         </Box>
         <Typography variant="h4" style={{paddingTop: 10, paddingBottom: 6, fontWeight: 500}}>
-          Channel Info
+          Channel
         </Typography>
         <Table size="small">
           <TableBody>
@@ -56,6 +70,16 @@ export default (props: Props) => {
               </TableCell>
               <TableCell>
                 <Typography style={{width: 260, ...breakWords}}>{props.channel.name}</Typography>
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>
+                <Typography align="right"></Typography>
+              </TableCell>
+              <TableCell>
+                <Button color="primary" variant="outlined" size="small" onClick={channelLeave}>
+                  Leave Channel
+                </Button>
               </TableCell>
             </TableRow>
           </TableBody>
