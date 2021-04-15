@@ -18,13 +18,11 @@ import {ipcRenderer} from 'electron'
 
 import {creds} from '../rpc/client'
 import {openSnack} from '../snack'
-import ChangePasswordDialog from '../auth/change-password'
 import {contentTop} from '../theme'
 
 export default (props: {}) => {
   const [prerelease, setPrerelease] = React.useState(false)
   const [version, setVersion] = React.useState('')
-  const [changePasswordOpen, setChangePasswordOpen] = React.useState(false)
 
   const onPrereleaseChange = React.useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const checked = event.target.checked
@@ -85,17 +83,6 @@ export default (props: {}) => {
             </TableCell>
           </TableRow>
 
-          <TableRow>
-            <TableCell style={cellStyles}>
-              <Typography align="right"></Typography>
-            </TableCell>
-            <TableCell style={cellStyles}>
-              <Box display="flex" flexDirection="column">
-                <Link onClick={() => setChangePasswordOpen(true)}>Change Password</Link>
-              </Box>
-            </TableCell>
-          </TableRow>
-
           {process.env.NODE_ENV === 'development' && (
             <TableRow>
               <TableCell style={cellStyles}>
@@ -110,15 +97,6 @@ export default (props: {}) => {
           )}
         </TableBody>
       </Table>
-      {changePasswordOpen && (
-        <ChangePasswordDialog
-          open={true}
-          close={(snack?: string) => {
-            if (snack) openSnack({message: snack, alert: 'success', duration: 4000})
-            setChangePasswordOpen(false)
-          }}
-        />
-      )}
     </Box>
   )
 }

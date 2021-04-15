@@ -41,6 +41,7 @@ function createRenderConfig(isDev) {
       fs: "require('fs')",
       os: "require('os')",
       electron: "require('electron')",
+      keytar: "require('keytar')",
     },
 
     module: {

@@ -4,6 +4,7 @@ import {rpc, creds} from './rpc/client'
 import {SnackProps} from './components/snack'
 import * as grpc from '@grpc/grpc-js'
 import {openSnackError} from './snack'
+import {Account, Org, AuthStatus} from '@getchill.app/tsclient/lib/rpc'
 
 export interface Error {
   name: string
@@ -15,11 +16,11 @@ export interface Error {
 export type State = {
   error?: Error
   ready: boolean
-  unlocked: boolean
   updating: boolean
+  unlocked: boolean
+  org?: Org
 
   focused: boolean
-  fido2Enabled: boolean
 
   snackOpen: boolean
   snack?: SnackProps
@@ -27,36 +28,34 @@ export type State = {
 
 export const store = new Store<State>({
   ready: false,
-  unlocked: false,
   updating: false,
-  fido2Enabled: false,
-
+  unlocked: false,
   focused: false,
   snackOpen: false,
 })
-
-export const loadStatus = async () => {
-  const status = await rpc.status({})
-  store.update((s) => {
-    s.fido2Enabled = !!status.fido2
-  })
-}
 
 export const unlock = async (authToken?: string) => {
   if (!authToken) {
     throw new Error('no auth token')
   }
   creds.token = authToken
+  console.log('Unlocked')
+
+  // Check org status
+  const status = await rpc.status({})
   store.update((s) => {
     s.unlocked = true
+    s.org = status.org
   })
 }
 
 export const lock = () => {
-  creds.token = ''
+  console.log('Locked')
   store.update((s) => {
     s.unlocked = false
+    s.org = undefined
   })
+  creds.token = ''
 }
 
 export const errored = (err: Error) => {

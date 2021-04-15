@@ -15,10 +15,8 @@ import {
 import Header from '../header'
 
 import GeneralView from './general'
-import AuthenticatorsView from '../authenticators'
 import DebugView from './debug'
 import StyleGuide from '../style-guide'
-import AuthProvisionsView from '../auth/provisions'
 
 import {column1Color} from '../theme'
 import {Store} from 'pullstate'
@@ -33,8 +31,6 @@ type Nav = {
 const navs: Array<Nav> = [
   {label: 'General', location: '/general'},
   {label: 'Vault', location: '/vault'},
-  {label: 'Auth', location: '/auth'},
-  {label: 'FIDO2', location: '/fido2'},
   {label: 'Debug', location: '/debug'},
 ]
 
@@ -72,8 +68,6 @@ export default (props: Props) => {
         </List>
         <Box display="flex" flexDirection="column" flex={1}>
           {selected == '/general' && <GeneralView />}
-          {selected == '/auth' && <AuthProvisionsView />}
-          {selected == '/fido2' && <AuthenticatorsView />}
           {selected == '/debug' && <DebugView />}
           {selected == '/debug/style-guide' && <StyleGuide />}
         </Box>

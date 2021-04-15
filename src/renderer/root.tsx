@@ -8,8 +8,9 @@ import {closeSnack} from './snack'
 import {ipcRenderer, remote} from 'electron'
 import Snack, {SnackProps} from './components/snack'
 
-import Auth from './auth'
-import AuthSplash from './auth/splash'
+import Account from './account'
+import Splash from './account/splash'
+import Org from './org'
 import App from './app'
 
 import {Box, Typography} from '@material-ui/core'
@@ -20,17 +21,15 @@ import UpdateSplash from './update/splash'
 import {serviceStart} from './run'
 
 import './app.css'
+import {AuthStatus} from '@getchill.app/tsclient/lib/rpc'
 
 const Root = (_: {}) => {
-  const {ready, unlocked, updating} = store.useState((s) => ({
-    ready: s.ready,
+  const {updating, ready, unlocked, org} = store.useState((s) => ({
     unlocked: s.unlocked,
     updating: s.updating,
+    ready: s.ready,
+    org: s.org,
   }))
-
-  React.useEffect(() => {
-    if (!ready) serviceStart()
-  }, [])
 
   ipcRenderer.removeAllListeners('preferences')
   ipcRenderer.on('preferences', (event, message) => {
@@ -42,11 +41,15 @@ const Root = (_: {}) => {
   }
 
   if (!ready) {
-    return <AuthSplash />
+    return <Splash />
   }
 
   if (!unlocked) {
-    return <Auth />
+    return <Account />
+  }
+
+  if (!org) {
+    return <Org />
   }
 
   return <App />
@@ -89,3 +92,5 @@ window.addEventListener('unhandledrejection', (event) => {
   console.error('Unhandled rejection')
   errored(event.reason)
 })
+
+serviceStart()

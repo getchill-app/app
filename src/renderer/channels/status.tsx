@@ -60,6 +60,15 @@ export default (props: Props) => {
     setAnchorEl(null)
   }
 
+  const buttonColor = (connectStatus: ConnectStatus) => {
+    switch (connectStatus) {
+      case ConnectStatus.Connected:
+        return 'primary'
+      default:
+        return 'secondary'
+    }
+  }
+
   return (
     <Box
       display="flex"
@@ -68,18 +77,18 @@ export default (props: Props) => {
         height: 40,
       }}
     >
-      <ButtonBase focusRipple aria-haspopup="true" onClick={setOpen}>
-        <Box display="flex" flexDirection="column" paddingTop={1} paddingBottom={1}>
-          <Box display="flex" flexDirection="row">
-            {/* <Typography>{connectStatus(props.connectStatus)}</Typography> */}
-            {props.connectStatus == ConnectStatus.Disconnected && (
-              <Box paddingLeft={2}>
-                <Typography>{connectStatus(props.connectStatus)}</Typography>
-              </Box>
-            )}
-          </Box>
-        </Box>
-      </ButtonBase>
+      <Box display="flex" flexDirection="row" justifyContent="center">
+        <Button
+          size="small"
+          aria-haspopup="true"
+          onClick={setOpen}
+          variant="outlined"
+          color={buttonColor(props.connectStatus)}
+          style={{width: 140}}
+        >
+          {connectStatus(props.connectStatus)}
+        </Button>
+      </Box>
 
       <Popover
         anchorOrigin={{
@@ -94,7 +103,7 @@ export default (props: Props) => {
         anchorEl={anchorEl}
         onClose={close}
       >
-        <Box display="flex" flexDirection="column" flex={1} style={{width: 270}}>
+        <Box display="flex" flexDirection="column" flex={1} style={{width: 140}}>
           {props.connectStatus == ConnectStatus.Connected && (
             <Button
               color="secondary"
