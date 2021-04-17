@@ -7,13 +7,14 @@ import {rpc} from '../rpc/client'
 import {OrgCreateResponse, OrgKeyResponse, OrgSignResponse} from '@getchill.app/tsclient/lib/rpc'
 import {ipcRenderer} from 'electron'
 
-import {store, unlock} from '../store'
+import {store} from '../store'
 import {openSnack, openSnackError, closeSnack} from '../snack'
 import {clipboard, shell} from 'electron'
 import {mono} from '../theme'
 
 type Props = {
   domain: string
+  onCreate: () => void
 }
 
 export default (props: Props) => {
@@ -42,13 +43,9 @@ export default (props: Props) => {
       const resp: OrgCreateResponse = await rpc.orgCreate({
         domain: props.domain,
       })
-      // Check org status
-      const status = await rpc.status({})
-      store.update((s) => {
-        s.org = status.org
-      })
       console.log('Org created', resp)
       setLoading(false)
+      props.onCreate()
     } catch (err) {
       setLoading(false)
       openSnackError(err)

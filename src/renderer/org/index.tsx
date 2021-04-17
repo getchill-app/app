@@ -8,7 +8,9 @@ import Link from '../components/link'
 
 import OrgCreateView from './create'
 
-type Props = {}
+type Props = {
+  onCreate: () => void
+}
 
 export default (props: Props) => {
   const [step, setStep] = React.useState('')

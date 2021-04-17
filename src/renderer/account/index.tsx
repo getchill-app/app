@@ -7,21 +7,39 @@ import Header from '../header'
 import Logo from '../logo'
 import Link from '../components/link'
 
-import AuthCreateView from './create'
-import AuthLoginView from './login'
+import CreateView from './create'
+import LoginView from './login'
+import VerifyView from './verify'
+import OrgView from '../org'
 import {rpc} from '../rpc/client'
-import {AuthStatus} from '@getchill.app/tsclient/lib/rpc'
+import {AccountStatus} from '@getchill.app/tsclient/lib/rpc'
+
+import {store} from '../store'
 
 type Props = {}
 
 export default (props: Props) => {
-  const [step, setStep] = React.useState('')
+  const {unlocked} = store.useState()
+  const [step, setStep] = React.useState(!unlocked ? 'login' : '')
 
-  const status = async () => {
-    const status = await rpc.authStatus({})
+  const refresh = async () => {
+    const status = await rpc.accountStatus({})
+    console.log('Status', status)
     switch (status.status) {
-      case AuthStatus.AUTH_SETUP_NEEDED:
+      case AccountStatus.ACCOUNT_SETUP_NEEDED:
         setStep('create')
+        break
+      case AccountStatus.ACCOUNT_UNVERIFIED:
+        setStep('verify')
+        break
+      case AccountStatus.ACCOUNT_ORG_NEEDED:
+        setStep('org')
+        break
+      case AccountStatus.ACCOUNT_LOCKED:
+        setStep('login')
+        break
+      case AccountStatus.ACCOUNT_REGISTERED:
+        setStep('registered')
         break
       default:
         setStep('login')
@@ -30,15 +48,15 @@ export default (props: Props) => {
   }
 
   React.useEffect(() => {
-    status()
-  }, [])
+    if (unlocked) refresh()
+  }, [unlocked])
 
   const renderCreate = () => {
     return (
       <Box display="flex" flexGrow={1} flexDirection="column" alignItems="center">
         <Header />
         <Logo top={100} />
-        <AuthCreateView onCreate={() => {}} />
+        <CreateView onCreate={refresh} />
 
         {/* <Box style={{paddingTop: 10}}>
           <Typography style={{width: 550, marginTop: 10, textAlign: 'center'}}>
@@ -52,21 +70,37 @@ export default (props: Props) => {
     )
   }
 
+  const renderVerify = () => {
+    return (
+      <Box display="flex" flexGrow={1} flexDirection="column" alignItems="center">
+        <Header />
+        <Logo top={100} />
+        <VerifyView onVerify={refresh} />
+      </Box>
+    )
+  }
+
+  const renderOrg = () => {
+    return <OrgView onCreate={refresh} />
+  }
+
   const renderLogin = () => {
     return (
       <Box display="flex" flexGrow={1} flexDirection="column" alignItems="center">
         <Header />
         <Logo top={100} />
-        <AuthLoginView onLogin={() => {}} />
+        <LoginView onLogin={refresh} />
       </Box>
     )
   }
 
   switch (step) {
-    case '':
-      return <Splash />
     case 'create':
       return renderCreate()
+    case 'verify':
+      return renderVerify()
+    case 'org':
+      return renderOrg()
     case 'login':
       return renderLogin()
     default:

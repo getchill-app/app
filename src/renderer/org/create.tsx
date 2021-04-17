@@ -71,7 +71,7 @@ export default (props: Props) => {
       case 'input':
         return renderInput()
       case 'verify':
-        return <OrgVerify domain={domain} />
+        return <OrgVerify domain={domain} onCreate={() => {}} />
       default:
         return null
     }

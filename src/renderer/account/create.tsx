@@ -3,7 +3,7 @@ import * as React from 'react'
 import {Box, Button, Divider, FormControl, FormHelperText, TextField, Typography} from '@material-ui/core'
 import Link from '../components/link'
 
-import {rpc} from '../rpc/client'
+import {rpc, creds} from '../rpc/client'
 import {AccountCreateResponse, RandPasswordResponse} from '@getchill.app/tsclient/lib/rpc'
 import {ipcRenderer} from 'electron'
 
@@ -11,6 +11,7 @@ import {store, unlock} from '../store'
 import {openSnack, openSnackError, closeSnack} from '../snack'
 
 import keytar from 'keytar'
+import * as grpc from '@grpc/grpc-js'
 
 type Props = {
   onCreate: () => void
@@ -19,20 +20,11 @@ type Props = {
 export default (props: Props) => {
   const [email, setEmail] = React.useState('')
   const [password, setPassword] = React.useState('')
-  const [passwordConfirm, setPasswordConfirm] = React.useState('')
   const [loading, setLoading] = React.useState(false)
 
   const onInputChangeEmail = React.useCallback((e: React.SyntheticEvent<EventTarget>) => {
     let target = e.target as HTMLInputElement
     setEmail(target.value || '')
-  }, [])
-  const onInputChangePassword = React.useCallback((e: React.SyntheticEvent<EventTarget>) => {
-    let target = e.target as HTMLInputElement
-    setPassword(target.value || '')
-  }, [])
-  const onInputChangePasswordConfirm = React.useCallback((e: React.SyntheticEvent<EventTarget>) => {
-    let target = e.target as HTMLInputElement
-    setPasswordConfirm(target.value || '')
   }, [])
 
   const fillDefault = async () => {
@@ -57,6 +49,10 @@ export default (props: Props) => {
       await unlock(resp.authToken)
       props.onCreate()
     } catch (err) {
+      if (err.code == grpc.status.ALREADY_EXISTS) {
+        console.log('Account already exists..')
+        // TODO: Show login
+      }
       setLoading(false)
       openSnackError(err)
     }
@@ -75,30 +71,6 @@ export default (props: Props) => {
           type="email"
           onChange={onInputChangeEmail}
           value={email}
-          style={{width: 400}}
-          disabled={loading}
-        />
-        <Box padding={1} />
-      </FormControl>
-      <FormControl>
-        <TextField
-          label="Password"
-          variant="outlined"
-          type="password"
-          onChange={onInputChangePassword}
-          value={password}
-          style={{width: 400}}
-          disabled={loading}
-        />
-        <Box padding={1} />
-      </FormControl>
-      <FormControl>
-        <TextField
-          label="Confirm Password"
-          variant="outlined"
-          type="password"
-          onChange={onInputChangePasswordConfirm}
-          value={passwordConfirm}
           style={{width: 400}}
           disabled={loading}
         />

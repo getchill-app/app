@@ -56,6 +56,7 @@ export default (props: Props) => {
         name: name,
       })
       setLoading(false)
+      setName('')
       props.close(resp.channel)
     } catch (err) {
       setLoading(false)

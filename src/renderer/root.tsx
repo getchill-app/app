@@ -9,8 +9,8 @@ import {ipcRenderer, remote} from 'electron'
 import Snack, {SnackProps} from './components/snack'
 
 import Account from './account'
+import AccountVerify from './account/verify'
 import Splash from './account/splash'
-import Org from './org'
 import App from './app'
 
 import {Box, Typography} from '@material-ui/core'
@@ -21,14 +21,13 @@ import UpdateSplash from './update/splash'
 import {serviceStart} from './run'
 
 import './app.css'
-import {AuthStatus} from '@getchill.app/tsclient/lib/rpc'
 
 const Root = (_: {}) => {
-  const {updating, ready, unlocked, org} = store.useState((s) => ({
-    unlocked: s.unlocked,
+  const {updating, ready, unlocked, registered} = store.useState((s) => ({
     updating: s.updating,
     ready: s.ready,
-    org: s.org,
+    unlocked: s.unlocked,
+    registered: s.registered,
   }))
 
   ipcRenderer.removeAllListeners('preferences')
@@ -44,12 +43,8 @@ const Root = (_: {}) => {
     return <Splash />
   }
 
-  if (!unlocked) {
+  if (!registered || !unlocked) {
     return <Account />
-  }
-
-  if (!org) {
-    return <Org />
   }
 
   return <App />

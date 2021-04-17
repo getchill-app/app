@@ -2,7 +2,7 @@ import {ipcRenderer} from 'electron'
 import {store, errored} from './store'
 import {updateCheck} from './update'
 import {rpc} from './rpc/client'
-import {AuthStatus, StatusRequest, StatusResponse} from '@getchill.app/tsclient/lib/rpc'
+import {AccountStatus} from '@getchill.app/tsclient/lib/rpc'
 
 export const serviceStart = () => {
   ipcRenderer.removeAllListeners('service-started')
@@ -21,7 +21,7 @@ export const serviceStarted = async () => {
   updateCheck()
 
   const ping = async () => {
-    rpc.authStatus({})
+    rpc.accountStatus({})
   }
   window.addEventListener('online', ping)
 
@@ -40,19 +40,11 @@ export const serviceStarted = async () => {
   })
 
   // Get current app status
-  const status = await rpc.authStatus({})
-  console.log('Auth status ready', status)
-  if (status.status == AuthStatus.AUTH_UNLOCKED) {
-    const status = await rpc.status({})
-    store.update((s) => {
-      s.ready = true
-      s.org = status.org
-    })
-  } else {
-    store.update((s) => {
-      s.ready = true
-    })
-  }
+  const status = await rpc.accountStatus({})
+  store.update((s) => {
+    s.ready = true
+    s.registered = status.status == AccountStatus.ACCOUNT_REGISTERED
+  })
 }
 
 // Start service

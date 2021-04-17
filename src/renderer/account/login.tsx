@@ -3,7 +3,7 @@ import * as React from 'react'
 import {Box, Button, Divider, FormControl, FormHelperText, TextField, Typography} from '@material-ui/core'
 import Link from '../components/link'
 
-import {rpc} from '../rpc/client'
+import {rpc, creds} from '../rpc/client'
 import {AuthUnlockResponse, AuthType} from '@getchill.app/tsclient/lib/rpc'
 import {ipcRenderer} from 'electron'
 
@@ -19,6 +19,7 @@ type Props = {
 export default (props: Props) => {
   const [password, setPassword] = React.useState('')
   const [loading, setLoading] = React.useState(false)
+  const [visible, setVisible] = React.useState(false)
 
   const onInputChangePassword = React.useCallback((e: React.SyntheticEvent<EventTarget>) => {
     let target = e.target as HTMLInputElement
@@ -27,14 +28,20 @@ export default (props: Props) => {
 
   const fillDefault = async () => {
     const defaultPassword = await keytar.getPassword('Chill', 'password')
-    if (defaultPassword) setPassword(defaultPassword)
+    if (defaultPassword) {
+      setPassword(defaultPassword)
+    }
   }
 
   React.useEffect(() => {
     fillDefault()
   }, [])
 
-  const accountCreate = async () => {
+  React.useEffect(() => {
+    if (password) accountUnlock()
+  }, [password])
+
+  const accountUnlock = async () => {
     setLoading(true)
 
     try {
@@ -42,15 +49,16 @@ export default (props: Props) => {
         secret: password,
         type: AuthType.PASSWORD_AUTH,
       })
-      console.log('resp:', resp)
       setLoading(false)
       await unlock(resp.authToken)
       props.onLogin()
     } catch (err) {
       setLoading(false)
       openSnackError(err)
+      setVisible(true)
     }
   }
+  if (!visible) return null
 
   return (
     <Box display="flex" flexDirection="column" alignItems="center">
@@ -70,7 +78,7 @@ export default (props: Props) => {
         <Box padding={1} />
       </FormControl>
       <Box display="flex" flexDirection="row" justifyContent="center" style={{width: 400}}>
-        <Button color="primary" variant="outlined" onClick={accountCreate} disabled={loading}>
+        <Button color="primary" variant="outlined" onClick={accountUnlock} disabled={loading}>
           Login
         </Button>
       </Box>

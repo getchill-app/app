@@ -4,7 +4,6 @@ import {rpc, creds} from './rpc/client'
 import {SnackProps} from './components/snack'
 import * as grpc from '@grpc/grpc-js'
 import {openSnackError} from './snack'
-import {Account, Org, AuthStatus} from '@getchill.app/tsclient/lib/rpc'
 
 export interface Error {
   name: string
@@ -18,7 +17,7 @@ export type State = {
   ready: boolean
   updating: boolean
   unlocked: boolean
-  org?: Org
+  registered: boolean
 
   focused: boolean
 
@@ -30,6 +29,7 @@ export const store = new Store<State>({
   ready: false,
   updating: false,
   unlocked: false,
+  registered: false,
   focused: false,
   snackOpen: false,
 })
@@ -39,21 +39,16 @@ export const unlock = async (authToken?: string) => {
     throw new Error('no auth token')
   }
   creds.token = authToken
-  console.log('Unlocked')
-
-  // Check org status
-  const status = await rpc.status({})
   store.update((s) => {
     s.unlocked = true
-    s.org = status.org
   })
+  console.log('Unlocked')
 }
 
 export const lock = () => {
   console.log('Locked')
   store.update((s) => {
     s.unlocked = false
-    s.org = undefined
   })
   creds.token = ''
 }
