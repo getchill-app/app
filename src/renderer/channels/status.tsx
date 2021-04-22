@@ -20,6 +20,7 @@ import {breakWords} from '../theme'
 
 import {rpc} from '../rpc/client'
 import {Key, User} from '@getchill.app/tsclient/lib/rpc'
+import {store} from '../store'
 
 import {Theme, withStyles, createStyles} from '@material-ui/core/styles'
 
@@ -67,6 +68,13 @@ export default (props: Props) => {
       default:
         return 'secondary'
     }
+  }
+
+  const onSettingsOpen = () => {
+    store.update((s) => {
+      close()
+      s.settingsOpen = true
+    })
   }
 
   return (
@@ -128,6 +136,7 @@ export default (props: Props) => {
               Connect
             </Button>
           )}
+          <Button onClick={onSettingsOpen}>Settings</Button>
         </Box>
       </Popover>
     </Box>

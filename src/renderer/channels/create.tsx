@@ -73,6 +73,7 @@ export default (props: Props) => {
       loading={loading}
     >
       <Box display="flex" flex={1} flexDirection="column" style={{width: '100%'}}>
+        <Typography paragraph>Channel names are lowercase and can contain dashes or underscores.</Typography>
         <TextField
           autoFocus
           label="Channel Name"
@@ -89,25 +90,6 @@ export default (props: Props) => {
           }}
         />
         <Box height={10} />
-        <Typography paragraph>
-          For more details about channels see{' '}
-          <Link span onClick={() => shell.openExternal('https://keys.pub/docs/specs/channel.html')}>
-            keys.pub/docs/specs/channel
-          </Link>
-          .
-        </Typography>
-        {/* <TextField
-          autoFocus
-          label="Description (optional)"
-          fullWidth
-          variant="outlined"
-          onChange={onInputChangeDesc}
-          value={desc}
-          inputProps={{
-            spellCheck: false,
-          }}
-        />
-        <Box height={20} /> */}
       </Box>
     </Dialog>
   )

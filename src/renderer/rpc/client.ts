@@ -10,7 +10,7 @@ import {
 
 import * as getenv from 'getenv'
 
-import {lock, errored} from '../store'
+import {errored} from '../store'
 import {ConsoleLogger} from './logger'
 
 const appName = getenv.string('CHILL_APP')
@@ -27,7 +27,7 @@ export const creds: Credentials = new Credentials(cert)
 export const rpc = rpcService('localhost:' + port, creds)
 rpc.log = new ConsoleLogger()
 rpc.on('unauthenticated', (e: RPCError) => {
-  lock()
+  errored(e)
 })
 rpc.on('unavailable', (e: RPCError) => {
   errored(e)
@@ -35,7 +35,7 @@ rpc.on('unavailable', (e: RPCError) => {
 
 export const fido2: FIDO2Service = fido2Service('localhost:' + port, creds)
 fido2.on('unauthenticated', (e: RPCError) => {
-  lock()
+  errored(e)
 })
 fido2.on('unavailable', (e: RPCError) => {
   errored(e)

@@ -3,8 +3,8 @@ import * as React from 'react'
 import {Box, Button, Divider, FormControl, FormHelperText, TextField, Typography} from '@material-ui/core'
 import Link from '../components/link'
 
-import {rpc} from '../rpc/client'
-import {AccountVerifyResponse} from '@getchill.app/tsclient/lib/rpc'
+import {rpc, creds} from '../rpc/client'
+import {AccountCreateResponse, RandPasswordResponse} from '@getchill.app/tsclient/lib/rpc'
 import {ipcRenderer} from 'electron'
 
 import {store} from '../store'
@@ -14,27 +14,26 @@ import keytar from 'keytar'
 import * as grpc from '@grpc/grpc-js'
 
 type Props = {
-  onVerify: () => void
+  onRefresh: () => void
 }
 
 export default (props: Props) => {
-  const [code, setCode] = React.useState('')
+  const [username, setUsername] = React.useState('')
   const [loading, setLoading] = React.useState(false)
 
   const onInputChange = React.useCallback((e: React.SyntheticEvent<EventTarget>) => {
     let target = e.target as HTMLInputElement
-    setCode(target.value || '')
+    setUsername(target.value || '')
   }, [])
 
-  const accountVerify = async () => {
+  const accountSetUsername = async () => {
     setLoading(true)
-
     try {
-      const resp: AccountVerifyResponse = await rpc.accountVerify({
-        code: code,
+      await rpc.accountSetUsername({
+        username,
       })
       setLoading(false)
-      props.onVerify()
+      props.onRefresh()
     } catch (err) {
       setLoading(false)
       openSnackError(err)
@@ -44,24 +43,24 @@ export default (props: Props) => {
   return (
     <Box display="flex" flexDirection="column" alignItems="center">
       <Typography style={{paddingTop: 0, paddingBottom: 20, width: 550, textAlign: 'center'}}>
-        Verify.
+        Hi! Let's choose a username.
       </Typography>
       <FormControl>
         <TextField
           autoFocus
-          label="Code"
+          label="Username"
           variant="outlined"
-          type="code"
           onChange={onInputChange}
-          value={code}
+          value={username}
           style={{width: 400}}
           disabled={loading}
+          spellCheck={false}
         />
         <Box padding={1} />
       </FormControl>
       <Box display="flex" flexDirection="row" justifyContent="center" style={{width: 400}}>
-        <Button color="primary" variant="outlined" onClick={accountVerify} disabled={loading}>
-          Verify
+        <Button color="primary" variant="outlined" onClick={accountSetUsername} disabled={loading}>
+          Set
         </Button>
       </Box>
     </Box>

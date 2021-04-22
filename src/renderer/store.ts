@@ -16,55 +16,35 @@ export type State = {
   error?: Error
   ready: boolean
   updating: boolean
-  unlocked: boolean
   registered: boolean
 
   focused: boolean
 
   snackOpen: boolean
   snack?: SnackProps
+
+  settingsOpen: boolean
 }
 
 export const store = new Store<State>({
   ready: false,
   updating: false,
-  unlocked: false,
   registered: false,
   focused: false,
   snackOpen: false,
+  settingsOpen: false,
 })
-
-export const unlock = async (authToken?: string) => {
-  if (!authToken) {
-    throw new Error('no auth token')
-  }
-  creds.token = authToken
-  store.update((s) => {
-    s.unlocked = true
-  })
-  console.log('Unlocked')
-}
-
-export const lock = () => {
-  console.log('Locked')
-  store.update((s) => {
-    s.unlocked = false
-  })
-  creds.token = ''
-}
 
 export const errored = (err: Error) => {
   // TODO: Special view for grpc unavailable
   console.error(err)
 
-  switch (err.code) {
-    case grpc.status.PERMISSION_DENIED:
-    case grpc.status.UNAUTHENTICATED:
-      console.log('Locking...')
-      lock()
-      openSnackError(err as Error)
-      return
-  }
+  // switch (err.code) {
+  //   case grpc.status.PERMISSION_DENIED:
+  //   case grpc.status.UNAUTHENTICATED:
+  //     openSnackError(err as Error)
+  //     return
+  // }
 
   store.update((s) => {
     s.error = err

@@ -7,10 +7,9 @@ import Header from '../header'
 import Logo from '../logo'
 import Link from '../components/link'
 
-import CreateView from './create'
-import LoginView from './login'
-import VerifyView from './verify'
-import OrgView from '../org'
+import RegisterView from './register'
+import UsernameView from './username'
+import AcceptView from './accept'
 import {rpc} from '../rpc/client'
 import {AccountStatus} from '@getchill.app/tsclient/lib/rpc'
 
@@ -19,91 +18,76 @@ import {store} from '../store'
 type Props = {}
 
 export default (props: Props) => {
-  const {unlocked} = store.useState()
-  const [step, setStep] = React.useState(!unlocked ? 'login' : '')
+  const [step, setStep] = React.useState('')
 
   const refresh = async () => {
     const status = await rpc.accountStatus({})
     console.log('Status', status)
     switch (status.status) {
-      case AccountStatus.ACCOUNT_SETUP_NEEDED:
+      case AccountStatus.ACCOUNT_CREATE:
         setStep('create')
         break
-      case AccountStatus.ACCOUNT_UNVERIFIED:
-        setStep('verify')
+      case AccountStatus.ACCOUNT_USERNAME:
+        setStep('username')
         break
-      case AccountStatus.ACCOUNT_ORG_NEEDED:
-        setStep('org')
+      case AccountStatus.ACCOUNT_ACCEPTANCE:
+        setStep('accept')
         break
-      case AccountStatus.ACCOUNT_LOCKED:
-        setStep('login')
-        break
-      case AccountStatus.ACCOUNT_REGISTERED:
-        setStep('registered')
+      case AccountStatus.ACCOUNT_COMPLETE:
+        store.update((s) => {
+          s.registered = true
+        })
         break
       default:
-        setStep('login')
+        setStep('unknown')
         break
     }
   }
 
   React.useEffect(() => {
-    if (unlocked) refresh()
-  }, [unlocked])
+    refresh()
+  }, [])
 
   const renderCreate = () => {
     return (
       <Box display="flex" flexGrow={1} flexDirection="column" alignItems="center">
         <Header />
         <Logo top={100} />
-        <CreateView onCreate={refresh} />
-
-        {/* <Box style={{paddingTop: 10}}>
-          <Typography style={{width: 550, marginTop: 10, textAlign: 'center'}}>
-            Do you want to{' '}
-            <Link span onClick={connect}>
-              connect to an existing account?
-            </Link>
-          </Typography>
-        </Box> */}
+        <RegisterView onCreate={refresh} />
       </Box>
     )
   }
 
-  const renderVerify = () => {
+  const renderUsername = () => {
     return (
       <Box display="flex" flexGrow={1} flexDirection="column" alignItems="center">
         <Header />
         <Logo top={100} />
-        <VerifyView onVerify={refresh} />
+        <UsernameView onRefresh={refresh} />
       </Box>
     )
   }
 
-  const renderOrg = () => {
-    return <OrgView onCreate={refresh} />
-  }
-
-  const renderLogin = () => {
+  const renderAccept = () => {
     return (
       <Box display="flex" flexGrow={1} flexDirection="column" alignItems="center">
         <Header />
         <Logo top={100} />
-        <LoginView onLogin={refresh} />
+        <AcceptView onRefresh={refresh} />
       </Box>
     )
   }
 
   switch (step) {
+    case '':
+      return <Splash />
     case 'create':
       return renderCreate()
-    case 'verify':
-      return renderVerify()
-    case 'org':
-      return renderOrg()
-    case 'login':
-      return renderLogin()
+    case 'username':
+      return renderUsername()
+    case 'accept':
+      return renderAccept()
     default:
-      return null
+      return <Splash message="Oops, something went wrong" />
   }
 }

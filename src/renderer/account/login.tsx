@@ -7,7 +7,7 @@ import {rpc, creds} from '../rpc/client'
 import {AuthUnlockResponse, AuthType} from '@getchill.app/tsclient/lib/rpc'
 import {ipcRenderer} from 'electron'
 
-import {store, unlock} from '../store'
+import {store} from '../store'
 import {openSnack, openSnackError, closeSnack} from '../snack'
 
 import keytar from 'keytar'
@@ -50,7 +50,8 @@ export default (props: Props) => {
         type: AuthType.PASSWORD_AUTH,
       })
       setLoading(false)
-      await unlock(resp.authToken)
+      // TODO: Unlock
+      // resp.authToken
       props.onLogin()
     } catch (err) {
       setLoading(false)

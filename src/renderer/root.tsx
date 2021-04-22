@@ -9,12 +9,11 @@ import {ipcRenderer, remote} from 'electron'
 import Snack, {SnackProps} from './components/snack'
 
 import Account from './account'
-import AccountVerify from './account/verify'
 import Splash from './account/splash'
 import App from './app'
 
 import {Box, Typography} from '@material-ui/core'
-import Errors from './errors'
+import ErrorDialog from './errors/dialog'
 import UpdateAlert from './update/alert'
 import UpdateSplash from './update/splash'
 
@@ -23,10 +22,10 @@ import {serviceStart} from './run'
 import './app.css'
 
 const Root = (_: {}) => {
-  const {updating, ready, unlocked, registered} = store.useState((s) => ({
+  const {error, updating, ready, registered} = store.useState((s) => ({
     updating: s.updating,
+    error: s.error,
     ready: s.ready,
-    unlocked: s.unlocked,
     registered: s.registered,
   }))
 
@@ -34,6 +33,9 @@ const Root = (_: {}) => {
   ipcRenderer.on('preferences', (event, message) => {
     // TODO: Show settings
   })
+  if (error) {
+    return <ErrorDialog error={error} />
+  }
 
   if (updating) {
     return <UpdateSplash />
@@ -43,7 +45,7 @@ const Root = (_: {}) => {
     return <Splash />
   }
 
-  if (!registered || !unlocked) {
+  if (!registered) {
     return <Account />
   }
 
@@ -60,7 +62,6 @@ export default (_: {}) => {
     <ThemeProvider theme={theme}>
       <Box display="flex" flex={1} flexDirection="row" style={{height: '100%'}}>
         <Root />
-        <Errors />
         <UpdateAlert />
         <Snack open={snackOpen} {...snack} onClose={closeSnack} />
       </Box>

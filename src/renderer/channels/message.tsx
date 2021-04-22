@@ -31,9 +31,8 @@ export default (props: Props) => {
       textStyle.color = 'red'
       break
   }
-  let user = message.sender?.user?.id
-  if (!user) user = message.sender?.id
-  if (!user) user = 'unknown'
+  let sender = message.sender
+  if (!sender) sender = 'unknown'
 
   const timestr = timeString(message.createdAt)
 
@@ -49,8 +48,12 @@ export default (props: Props) => {
       </Avatar> */}
       <Box display="flex" flexDirection="column" style={{paddingLeft: 10}}>
         <Box display="flex" flexDirection="row">
-          {message.sender?.user && <UserLabel user={message.sender?.user} style={{fontSize: '0.75em'}} />}
-          <Typography style={{paddingLeft: 6, fontSize: '0.75em', color: '#999'}}>{timestr}</Typography>
+          <Typography display="inline" variant="body2" style={{zoom: '96%'}}>
+            {sender}
+          </Typography>
+          <Typography style={{paddingLeft: 6, fontSize: '0.75em', color: '#999', paddingTop: 1}}>
+            {timestr}
+          </Typography>
         </Box>
         <Typography style={{...textStyle, paddingTop: 2, whiteSpace: 'pre-wrap', wordWrap: 'break-word'}}>
           {message.text}

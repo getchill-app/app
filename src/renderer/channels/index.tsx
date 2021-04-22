@@ -131,12 +131,21 @@ export default (props: Props) => {
     })
     relay.on('end', () => {
       console.log('Relay end')
-      if (!cancelling) setConnectStatus(ConnectStatus.Disconnected)
+      if (!cancelling) {
+        reconnect()
+      }
     })
+  }
+
+  const reconnect = async () => {
+    setConnectStatus(ConnectStatus.Disconnected)
+    await sleep(2000)
+    connect()
   }
 
   const disconnect = () => {
     console.log('Relay disconnect')
+    cancelling = true
     stream.current?.cancel()
   }
 
@@ -244,6 +253,10 @@ export default (props: Props) => {
       {<ChannelCreateView open={createOpen} close={closeCreate} />}
     </Box>
   )
+}
+
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
 const nowrapStyle = {

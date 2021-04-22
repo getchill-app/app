@@ -1,8 +1,9 @@
 import {ipcRenderer} from 'electron'
 import {store, errored} from './store'
 import {updateCheck} from './update'
-import {rpc} from './rpc/client'
-import {AccountStatus} from '@getchill.app/tsclient/lib/rpc'
+import {creds, rpc} from './rpc/client'
+import {AccountStatus, AuthType} from '@getchill.app/tsclient/lib/rpc'
+import keytar from 'keytar'
 
 export const serviceStart = () => {
   ipcRenderer.removeAllListeners('service-started')
@@ -39,12 +40,30 @@ export const serviceStarted = async () => {
     })
   })
 
-  // Get current app status
-  const status = await rpc.accountStatus({})
-  store.update((s) => {
-    s.ready = true
-    s.registered = status.status == AccountStatus.ACCOUNT_REGISTERED
-  })
+  try {
+    // Get or set a default password
+    let password = await keytar.getPassword('Chill', 'defaultPassword')
+    if (!password) {
+      const resp = await rpc.randPassword({})
+      password = resp.password || ''
+      await keytar.setPassword('Chill', 'defaultPassword', password)
+    }
+    const resp = await rpc.authUnlock({
+      secret: password,
+      type: AuthType.PASSWORD_AUTH,
+    })
+    creds.token = resp.authToken || ''
+
+    const status = await rpc.accountStatus({})
+    const registered = status.status == AccountStatus.ACCOUNT_COMPLETE
+
+    store.update((s) => {
+      s.ready = true
+      s.registered = registered
+    })
+  } catch (err) {
+    errored(err)
+  }
 }
 
 // Start service
