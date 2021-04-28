@@ -72,7 +72,7 @@ export default (props: Props) => {
                 <Typography style={{width: 260, ...breakWords}}>{props.channel.name}</Typography>
               </TableCell>
             </TableRow>
-            <TableRow>
+            {/* <TableRow>
               <TableCell>
                 <Typography align="right"></Typography>
               </TableCell>
@@ -81,7 +81,7 @@ export default (props: Props) => {
                   Leave Channel
                 </Button>
               </TableCell>
-            </TableRow>
+            </TableRow> */}
           </TableBody>
         </Table>
       </Box>

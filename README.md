@@ -30,7 +30,7 @@ You can run multiple instances by specifying a different app name and port:
 # Start chill service (as Chill2)
 chills -app Chill2 -port 22902
 
-# Start app (Keys2)
+# Start app (Chill2)
 yarn server
 CHILL_APP=Chill2 CHILL_PORT=22902 yarn start
 ```

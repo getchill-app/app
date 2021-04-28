@@ -78,25 +78,17 @@ export default (props: Props) => {
   }
 
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      style={{
-        height: 40,
-      }}
-    >
-      <Box display="flex" flexDirection="row" justifyContent="center">
-        <Button
-          size="small"
-          aria-haspopup="true"
-          onClick={setOpen}
-          variant="outlined"
-          color={buttonColor(props.connectStatus)}
-          style={{width: 140}}
-        >
-          {connectStatus(props.connectStatus)}
-        </Button>
-      </Box>
+    <Box display="flex" flexDirection="row">
+      <Button
+        size="small"
+        aria-haspopup="true"
+        onClick={setOpen}
+        variant="outlined"
+        color={buttonColor(props.connectStatus)}
+        style={{width: 140}}
+      >
+        {connectStatus(props.connectStatus)}
+      </Button>
 
       <Popover
         anchorOrigin={{

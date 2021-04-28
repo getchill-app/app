@@ -9,7 +9,7 @@ import Link from '../components/link'
 
 import RegisterView from './register'
 import UsernameView from './username'
-import AcceptView from './accept'
+import InviteAcceptView from './invite-accept'
 import {rpc} from '../rpc/client'
 import {AccountStatus} from '@getchill.app/tsclient/lib/rpc'
 
@@ -30,8 +30,8 @@ export default (props: Props) => {
       case AccountStatus.ACCOUNT_USERNAME:
         setStep('username')
         break
-      case AccountStatus.ACCOUNT_ACCEPTANCE:
-        setStep('accept')
+      case AccountStatus.ACCOUNT_INVITE_CODE:
+        setStep('invite-accept')
         break
       case AccountStatus.ACCOUNT_COMPLETE:
         store.update((s) => {
@@ -68,12 +68,12 @@ export default (props: Props) => {
     )
   }
 
-  const renderAccept = () => {
+  const renderInviteAccept = () => {
     return (
       <Box display="flex" flexGrow={1} flexDirection="column" alignItems="center">
         <Header />
         <Logo top={100} />
-        <AcceptView onRefresh={refresh} />
+        <InviteAcceptView onRefresh={refresh} />
       </Box>
     )
   }
@@ -85,8 +85,8 @@ export default (props: Props) => {
       return renderCreate()
     case 'username':
       return renderUsername()
-    case 'accept':
-      return renderAccept()
+    case 'invite-accept':
+      return renderInviteAccept()
     default:
       return <Splash message="Oops, something went wrong" />
   }

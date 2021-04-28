@@ -147,7 +147,7 @@ export default (props: Props) => {
         }}
       >
         <Box display="flex" flexDirection="row">
-          <Typography style={{paddingTop: 10, paddingLeft: 16, fontWeight: 500}} variant="h3">
+          <Typography style={{paddingTop: 10, paddingLeft: 16, fontSize: 20, fontWeight: 500}}>
             #{props.channel.name}
           </Typography>
           <Box display="flex" flexGrow={1} />

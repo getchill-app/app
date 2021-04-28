@@ -34,6 +34,7 @@ import {RelayOutput} from '@getchill.app/tsclient/lib/rpc'
 
 import ChannelView from './channel'
 import ChannelCreateView from './create'
+import AccountInviteView from '../account/invite'
 import StatusView, {ConnectStatus} from './status'
 
 type Props = {}
@@ -73,6 +74,7 @@ export default (props: Props) => {
   const [connectStatus, setConnectStatus] = React.useState(ConnectStatus.Disconnected)
 
   const [createOpen, setCreateOpen] = React.useState(false)
+  const [inviteOpen, setInviteOpen] = React.useState(false)
 
   const stream = React.useRef<ClientReadableStream<RelayOutput> | null>(null)
 
@@ -178,6 +180,17 @@ export default (props: Props) => {
             style={{paddingLeft: 8, paddingTop: 26}}
             alignItems="center"
           >
+            <Typography
+              style={{
+                fontFamily: 'Minercraftory',
+                fontSize: 18,
+                color: '#2196f3',
+                marginLeft: 8,
+                paddingBottom: 4,
+              }}
+            >
+              chill
+            </Typography>
             <Box display="flex" flexGrow={1} />
             <IconButton color="primary" size="small" onClick={() => setCreateOpen(true)}>
               <AddIcon />
@@ -242,15 +255,31 @@ export default (props: Props) => {
                 overflow: 'hidden',
               }}
             >
-              <StatusView connectStatus={connectStatus} connect={connect} disconnect={disconnect} />
+              <Box
+                display="flex"
+                flexDirection="row"
+                justifyContent="center"
+                style={{
+                  height: 32,
+                }}
+              >
+                <Button color="primary" size="small" variant="outlined" onClick={() => setInviteOpen(true)}>
+                  Invite
+                </Button>
+                <Box marginLeft={1} />
+                <StatusView connectStatus={connectStatus} connect={connect} disconnect={disconnect} />
+              </Box>
             </Box>
           </Box>
         </Box>
+
         <Box display="flex" flex={1}>
           {selected && <ChannelView channel={selected} index={selected!.index!} />}
         </Box>
       </Box>
+
       {<ChannelCreateView open={createOpen} close={closeCreate} />}
+      {<AccountInviteView open={inviteOpen} close={() => setInviteOpen(false)} />}
     </Box>
   )
 }
