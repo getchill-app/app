@@ -37,10 +37,6 @@ export default (props: Props) => {
     fillDefault()
   }, [])
 
-  React.useEffect(() => {
-    if (password) accountUnlock()
-  }, [password])
-
   const accountUnlock = async () => {
     setLoading(true)
 
