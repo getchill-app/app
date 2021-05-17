@@ -61,9 +61,9 @@ export default (props: Props) => {
         marginLeft={2}
         marginRight={2}
       >
-        <DialogTitle>
-          <Typography variant="h3">Invite to Chill</Typography>
-        </DialogTitle>
+        <Box margin={1} />
+        <Typography variant="h3">Invite to Chill</Typography>
+        <Box margin={1} />
         <TextField
           autoFocus
           label="Email"
@@ -76,7 +76,7 @@ export default (props: Props) => {
         />
         <Box padding={1} />
         <Typography style={{width: 400}}>
-          We won't email them, you'll need to send them an invite code in the next step.
+          In order to sign up, they must register with the email address you enter here.
         </Typography>
         <Box padding={1} />
 
@@ -85,7 +85,7 @@ export default (props: Props) => {
             Cancel
           </Button>
           <Button color="primary" variant="outlined" onClick={accountInvite} disabled={loading}>
-            Invite
+            Next
           </Button>
         </DialogActions>
       </Box>
@@ -99,7 +99,7 @@ export default (props: Props) => {
           <Typography variant="h3">Invite to Chill</Typography>
         </DialogTitle>
         <Typography style={{paddingTop: 0, paddingBottom: 20, width: 550, textAlign: 'center'}}>
-          You'll need to send them the following code (via email or text message) so they can accept your
+          You'll need to send them the following code (via email, text message, etc) so they can accept your
           invite:
         </Typography>
         <Typography
