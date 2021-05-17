@@ -22,7 +22,8 @@ export const serviceStarted = async () => {
   updateCheck()
 
   const ping = async () => {
-    rpc.accountStatus({})
+    console.log('Ping')
+    rpc.authStatus({})
   }
   window.addEventListener('online', ping)
 
@@ -41,6 +42,7 @@ export const serviceStarted = async () => {
   })
 
   try {
+    console.log('Account unlock...')
     // Get or set a default password
     let password = await keytar.getPassword('Chill', 'defaultPassword')
     if (!password) {
@@ -52,7 +54,7 @@ export const serviceStarted = async () => {
       secret: password,
       type: AuthType.PASSWORD_AUTH,
     })
-    creds.token = resp.authToken || ''
+    creds.token = resp.authToken!
 
     const status = await rpc.accountStatus({})
     const registered = status.status == AccountStatus.ACCOUNT_COMPLETE
