@@ -42,7 +42,7 @@ type Props = {}
 type State = {
   channels: Channel[]
   input: string
-  selected?: Channel
+  selected?: string
 }
 
 const initialState: State = {
@@ -59,9 +59,9 @@ const refresh = async () => {
     store.update((s) => {
       s.channels = channels
 
-      let selected = resp.channels?.find((c: Channel) => c.id == s.selected?.id)
-      if (!selected && channels.length > 0) selected = channels[0]
-      s.selected = selected
+      if (!s.selected && channels.length > 0) {
+        s.selected = channels[0].id
+      }
     })
   } catch (err) {
     openSnackError(err)
@@ -109,7 +109,7 @@ export default (props: Props) => {
   const select = (channel: Channel) => {
     console.log('Select channel', channel)
     store.update((s) => {
-      s.selected = channel
+      s.selected = channel.id
     })
   }
 
@@ -160,7 +160,7 @@ export default (props: Props) => {
     }
   }, [])
 
-  const closeCreate = (channel?: Channel) => {
+  const closeCreate = (channel?: string) => {
     setCreateOpen(false)
     if (channel) {
       store.update((s) => {
@@ -169,24 +169,22 @@ export default (props: Props) => {
     }
   }
 
+  const selectedChannel = channels.find((c: Channel) => selected == c.id)
+
   return (
     <Box display="flex" flexDirection="column" flex={1} style={{height: '100%'}} id="inboxView">
       <Header />
       <Box display="flex" flexDirection="row" flex={1} style={{height: '100%', position: 'relative'}}>
         <Box display="flex" flexDirection="column" style={{width: 270, background: column2Color}}>
-          <Box
-            display="flex"
-            flexDirection="row"
-            style={{paddingLeft: 8, paddingTop: 26}}
-            alignItems="center"
-          >
+          <Box display="flex" flexDirection="row" style={{paddingLeft: 8, paddingTop: 8}}>
             <Typography
               style={{
                 fontFamily: 'Minercraftory',
                 fontSize: 18,
                 color: '#2196f3',
-                marginLeft: 8,
                 paddingBottom: 4,
+                textAlign: 'center',
+                width: 240,
               }}
             >
               chill
@@ -217,7 +215,7 @@ export default (props: Props) => {
                         onClick={() => select(channel)}
                         key={channel.id}
                         style={{cursor: 'pointer'}}
-                        selected={selected?.id == channel?.id}
+                        selected={selected == channel?.id}
                         component={(props: any) => {
                           return <tr {...props} id={channel.id} />
                         }}
@@ -274,7 +272,7 @@ export default (props: Props) => {
         </Box>
 
         <Box display="flex" flex={1}>
-          {selected && <ChannelView channel={selected} index={selected!.index!} />}
+          {selectedChannel && <ChannelView channel={selectedChannel} index={selectedChannel.index!} />}
         </Box>
       </Box>
 

@@ -31,7 +31,7 @@ import {openSnack, openSnackError} from '../snack'
 
 type Props = {
   open: boolean
-  close: (channel?: Channel) => void
+  close: (id?: string) => void
 }
 
 export default (props: Props) => {
@@ -57,7 +57,7 @@ export default (props: Props) => {
       })
       setLoading(false)
       setName('')
-      props.close(resp.channel)
+      props.close(resp.id!)
     } catch (err) {
       setLoading(false)
       openSnackError(err)
