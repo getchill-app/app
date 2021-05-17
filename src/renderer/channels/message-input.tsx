@@ -25,7 +25,7 @@ export default (props: Props) => {
       props.addMessage(prepare.message!)
 
       try {
-        const create = await rpc.messageCreate({
+        const create = await rpc.messageSend({
           channel: props.channel.id,
           text: text,
         })
